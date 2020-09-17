@@ -1,16 +1,20 @@
 <template>
   <div class="panel">
     <h1 class="panel-heading">Booklet</h1>
-    <label class="panel-block" v-for="b in bookmarks" :key="b.link">
-      <input type="checkbox" />
-      {{ b.name }}
-    </label>
+    <a
+      class="panel-block"
+      v-for="i in bookmarkMap"
+      :key="i.id"
+      @click="openInNew(i.bk.link)"
+    >
+      {{ i.bk.name }}
+    </a>
     <div class="panel-block">
       <form v-on:submit.prevent="onSubmit">
         <div class="field is-grouped">
           <div class="field">
             <input
-              class="input is-small"
+              class="input"
               type="text"
               placeholder="Bookmark name"
               v-model="fields.name"
@@ -18,13 +22,13 @@
           </div>
           <div class="field">
             <input
-              class="input is-small"
+              class="input"
               type="text"
               placeholder="Hyperlink"
               v-model="fields.link"
             />
           </div>
-          <button class="button is-primary is-small">
+          <button class="button is-primary">
             Add
           </button>
         </div>
@@ -48,7 +52,24 @@ export default class Booklet extends Vue {
 
   private onSubmit() {
     console.log(this.bookmarks);
-    this.bookmarks.push(this.fields);
+    this.bookmarks.push({ ...this.fields });
+  }
+
+  get bookmarkMap() {
+    return this.bookmarks.map((bk, id) => ({
+      id,
+      bk
+    }));
+  }
+
+  private openInNew(link: string) {
+    console.log(`Opening link: ${link}`);
+    const hasHttp = link.match(/^https?:\/\//);
+    if (hasHttp) {
+      window.open(link, "_blank");
+    } else {
+      window.open(`//${link}`, "_blank");
+    }
   }
 }
 </script>
