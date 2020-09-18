@@ -8,11 +8,7 @@
             {{ i.bk.name }}
           </a>
           <div class="tags">
-            <span
-              v-for="t in getBookmarkTags(i.bk)"
-              :key="t.id"
-              class="tag is-light"
-            >
+            <span v-for="t in getBookmarkTags(i.bk)" :key="t.id" class="tag">
               {{ t.tag }}
               <button
                 class="delete is-small ml-3 mr-0"
@@ -21,12 +17,13 @@
             </span>
             <span
               v-if="!i.bk.addingTag"
-              class="tag add-btn"
+              class="tag add-btn is-primary"
               @click="toggleAddTag(i.id)"
             >
+              <span v-if="i.bk.tags.length === 0" class="mr-2">Add tags</span>
               <font-awesome-icon icon="plus" class="del-btn" />
             </span>
-            <span v-else class="tag">
+            <span v-else class="tag is-light">
               <input
                 v-focus
                 placeholder="new tag"
@@ -95,7 +92,7 @@ export default class Booklet extends Vue {
   private fields = {
     name: "",
     link: "",
-    tags: ["tag1", "tag2"],
+    tags: [],
     addingTag: false
   };
 
@@ -121,12 +118,18 @@ export default class Booklet extends Vue {
   }
 
   private openInNew(link: string) {
-    console.log(`Opening link: ${link}`);
     const hasHttp = link.match(/^https?:\/\//);
-    if (hasHttp) {
-      window.open(link, "_blank");
-    } else {
-      window.open(`//${link}`, "_blank");
+    try {
+      if (hasHttp) {
+        window.open(link, "_blank");
+      } else {
+        window.open(`//${link}`, "_blank");
+      }
+    } catch (e) {
+      // Throw away error
+      // This won't be necessary if we validate the URL
+      // in the field.
+      return;
     }
   }
 
@@ -190,13 +193,14 @@ export default class Booklet extends Vue {
     grid-column-end: 1;
 
     .del-btn {
-      color: hsl(0, 0, 48%);
+      color: white;
     }
 
     .add-btn {
       &:hover {
-        background-color: hsl(0, 0, 86%);
+        background-color: bulmaDarken($primary, 2.5%);
       }
+      cursor: pointer;
     }
   }
 
