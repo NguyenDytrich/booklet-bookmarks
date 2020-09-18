@@ -1,6 +1,33 @@
 <template>
   <div class="panel is-primary">
     <h1 class="panel-heading">Booklet</h1>
+
+    <div class="panel-block mt-3">
+      <form v-on:submit.prevent="onSubmit" style="width: 100%;">
+        <div class="field is-grouped is-grouped-centered">
+          <div class="field">
+            <input
+              class="input"
+              type="text"
+              placeholder="Bookmark name"
+              v-model="fields.name"
+            />
+          </div>
+          <div class="field">
+            <input
+              class="input"
+              type="text"
+              placeholder="Hyperlink"
+              v-model="fields.link"
+            />
+          </div>
+          <button class="button is-primary">
+            Add
+          </button>
+        </div>
+      </form>
+    </div>
+
     <div v-for="i in bookmarkMap" :key="i.id" class="panel-block">
       <div class="bookmark">
         <div class="bookmark-item">
@@ -41,31 +68,6 @@
           <div class="delete is-light" @click="deleteBookmark(i.id)" />
         </div>
       </div>
-    </div>
-    <div class="panel-block">
-      <form v-on:submit.prevent="onSubmit" style="width: 100%;">
-        <div class="field is-grouped is-grouped-centered">
-          <div class="field">
-            <input
-              class="input"
-              type="text"
-              placeholder="Bookmark name"
-              v-model="fields.name"
-            />
-          </div>
-          <div class="field">
-            <input
-              class="input"
-              type="text"
-              placeholder="Hyperlink"
-              v-model="fields.link"
-            />
-          </div>
-          <button class="button is-primary">
-            Add
-          </button>
-        </div>
-      </form>
     </div>
   </div>
 </template>
