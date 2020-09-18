@@ -32,9 +32,13 @@
       <div class="bookmark">
         <div class="bookmark-item">
           <div>
-            <a @click="openInNew(i.bk.link)">
+            <a @click="openInNew(i.bk.link)" class="is-size-4">
               {{ i.bk.name }}
             </a>
+            <div class="is-size-7">
+              <font-awesome-icon icon="link" class="light-btn" />
+              {{ i.bk.link }}
+            </div>
           </div>
           <div class="tags mt-2">
             <span v-for="t in getBookmarkTags(i.bk)" :key="t.id" class="tag">
@@ -99,7 +103,6 @@ export default class Booklet extends Vue {
   private newTag = "";
 
   private onSubmit() {
-    console.log(this.bookmarks);
     this.bookmarks.push(_.cloneDeep(this.fields));
   }
 
@@ -175,6 +178,10 @@ export default class Booklet extends Vue {
     border-radius: 0 5px 5px 0;
     border-left: none;
   }
+}
+
+.light-btn {
+  color: $text-light;
 }
 
 .bookmark {
