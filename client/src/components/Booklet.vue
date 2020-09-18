@@ -4,10 +4,12 @@
     <div v-for="i in bookmarkMap" :key="i.id" class="panel-block">
       <div class="bookmark">
         <div class="bookmark-item">
-          <a @click="openInNew(i.bk.link)">
-            {{ i.bk.name }}
-          </a>
-          <div class="tags">
+          <div>
+            <a @click="openInNew(i.bk.link)">
+              {{ i.bk.name }}
+            </a>
+          </div>
+          <div class="tags mt-2">
             <span v-for="t in getBookmarkTags(i.bk)" :key="t.id" class="tag">
               {{ t.tag }}
               <button
@@ -31,10 +33,6 @@
                 @blur="saveTagForBookmark(i.id)"
                 @keyup.enter="$event.target.blur"
                 type="text"
-              />
-              <button
-                class="delete is-small ml-3 mr-0"
-                @click="toggleAddTag(i.id)"
               />
             </span>
           </div>
