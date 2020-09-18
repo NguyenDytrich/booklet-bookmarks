@@ -19,11 +19,26 @@
                 @click="deleteBookmarkTag(i.id, t.id)"
               ></button>
             </span>
-            <span v-if="!addingTag" class="tag  add-btn">
+            <span
+              v-if="!i.bk.addingTag"
+              class="tag add-btn"
+              @click="toggleAddTag(i.id)"
+            >
               <font-awesome-icon icon="plus" class="del-btn" />
             </span>
-            <span v-else>
-              <input />
+            <span v-else class="tag">
+              <input
+                v-focus
+                placeholder="new tag"
+                v-model="newTag"
+                @blur="saveTagForBookmark(i.id)"
+                @keyup.enter="$event.target.blur"
+                type="text"
+              />
+              <button
+                class="delete is-small ml-3 mr-0"
+                @click="toggleAddTag(i.id)"
+              />
             </span>
           </div>
         </div>
@@ -65,15 +80,26 @@ import { Bookmark } from "../@types";
 import { Component, Vue } from "vue-property-decorator";
 import _ from "lodash";
 
-@Component
+@Component({
+  directives: {
+    focus: {
+      inserted: function(el) {
+        el.focus();
+      }
+    }
+  }
+})
 export default class Booklet extends Vue {
   private bookmarks: Array<Bookmark> = [];
 
   private fields = {
     name: "",
     link: "",
-    tags: ["tag1", "tag2"]
+    tags: ["tag1", "tag2"],
+    addingTag: false
   };
+
+  private newTag = "";
 
   private onSubmit() {
     console.log(this.bookmarks);
@@ -104,12 +130,24 @@ export default class Booklet extends Vue {
     }
   }
 
+  private toggleAddTag(id: number) {
+    this.bookmarks[id].addingTag = !this.bookmarks[id].addingTag;
+  }
+
   private deleteBookmark(id: number) {
     this.bookmarks.splice(id, 1);
   }
 
   private deleteBookmarkTag(bookmarkId: number, tagId: number) {
     this.bookmarks[bookmarkId].tags.splice(tagId, 1);
+  }
+
+  private saveTagForBookmark(bookmarkId: number) {
+    if (this.newTag !== "") {
+      this.bookmarks[bookmarkId].tags.push(this.newTag);
+      this.newTag = "";
+    }
+    this.bookmarks[bookmarkId].addingTag = false;
   }
 }
 </script>
