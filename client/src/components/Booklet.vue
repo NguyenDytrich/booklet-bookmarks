@@ -7,12 +7,28 @@
           <a @click="openInNew(i.bk.link)">
             {{ i.bk.name }}
           </a>
+          <div class="tags">
+            <span
+              v-for="t in getBookmarkTags(i.bk)"
+              :key="t.id"
+              class="tag is-light"
+            >
+              {{ t.tag }}
+              <button
+                class="delete is-small ml-3 mr-0"
+                @click="deleteBookmarkTag(i.id, t.id)"
+              ></button>
+            </span>
+            <span v-if="!addingTag" class="tag  add-btn">
+              <font-awesome-icon icon="plus" class="del-btn" />
+            </span>
+            <span v-else>
+              <input />
+            </span>
+          </div>
         </div>
         <div class="bookmark-controls">
-          <span
-            class="delete is-light is-pulled-right"
-            @click="deleteBookmark(i.id)"
-          />
+          <div class="delete is-light" @click="deleteBookmark(i.id)" />
         </div>
       </div>
     </div>
@@ -47,6 +63,7 @@
 <script lang="ts">
 import { Bookmark } from "../@types";
 import { Component, Vue } from "vue-property-decorator";
+import _ from "lodash";
 
 @Component
 export default class Booklet extends Vue {
@@ -54,18 +71,26 @@ export default class Booklet extends Vue {
 
   private fields = {
     name: "",
-    link: ""
+    link: "",
+    tags: ["tag1", "tag2"]
   };
 
   private onSubmit() {
     console.log(this.bookmarks);
-    this.bookmarks.push({ ...this.fields });
+    this.bookmarks.push(_.cloneDeep(this.fields));
   }
 
   get bookmarkMap() {
     return this.bookmarks.map((bk, id) => ({
       id,
       bk
+    }));
+  }
+
+  private getBookmarkTags(bookmark: Bookmark) {
+    return bookmark.tags.map((tag, id) => ({
+      id,
+      tag
     }));
   }
 
@@ -81,6 +106,10 @@ export default class Booklet extends Vue {
 
   private deleteBookmark(id: number) {
     this.bookmarks.splice(id, 1);
+  }
+
+  private deleteBookmarkTag(bookmarkId: number, tagId: number) {
+    this.bookmarks[bookmarkId].tags.splice(tagId, 1);
   }
 }
 </script>
@@ -121,11 +150,24 @@ export default class Booklet extends Vue {
   .bookmark-item {
     grid-column-start: 0;
     grid-column-end: 1;
+
+    .del-btn {
+      color: hsl(0, 0, 48%);
+    }
+
+    .add-btn {
+      &:hover {
+        background-color: hsl(0, 0, 86%);
+      }
+    }
   }
 
   .bookmark-controls {
     grid-column-start: 2;
     grid-column-end: -1;
+
+    display: flex;
+    justify-content: right;
   }
 }
 </style>
