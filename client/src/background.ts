@@ -19,6 +19,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: "hidden",
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -39,6 +40,12 @@ function createWindow() {
 
   win.on("closed", () => {
     win = null;
+  });
+
+  // Open links in default browser
+  win.webContents.on("new-window", function(e, url) {
+    e.preventDefault();
+    require("electron").shell.openExternal(url);
   });
 }
 

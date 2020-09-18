@@ -16,4 +16,8 @@ import Booklet from "./components/Booklet.vue";
 export default class App extends Vue {}
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+body::-webkit-scrollbar {
+  display: none;
+}
+</style>

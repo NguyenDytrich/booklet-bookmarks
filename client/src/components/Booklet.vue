@@ -1,6 +1,6 @@
 <template>
   <div class="panel is-primary">
-    <h1 class="panel-heading">Booklet</h1>
+    <h1 class="panel-heading app-title-bar">Booklet</h1>
 
     <div class="panel-block mt-3">
       <form v-on:submit.prevent="onSubmit" style="width: 100%;">
@@ -28,48 +28,54 @@
       </form>
     </div>
 
-    <div v-for="i in bookmarkMap" :key="i.id" class="panel-block">
-      <div class="bookmark">
-        <div class="bookmark-item">
-          <div>
-            <a @click="openInNew(i.bk.link)" class="is-size-4">
-              {{ i.bk.name }}
-            </a>
-            <div class="is-size-7">
-              <font-awesome-icon icon="link" class="light-btn" />
-              {{ i.bk.link }}
+    <div id="bookmarks" class="bookmarks-container">
+      <div v-for="i in bookmarkMap" :key="i.id" class="panel-block">
+        <div class="bookmark">
+          <div class="bookmark-item">
+            <div>
+              <a @click="openInNew(i.bk.link)" class="is-size-4">
+                {{ i.bk.name }}
+              </a>
+              <div class="is-size-7">
+                <font-awesome-icon icon="link" class="light-btn" />
+                {{ i.bk.link }}
+              </div>
+            </div>
+            <div class="tags mt-2">
+              <span v-for="t in getBookmarkTags(i.bk)" :key="t.id" class="tag">
+                {{ t.tag }}
+                <button
+                  class="delete is-small ml-3 mr-0"
+                  @click="deleteBookmarkTag(i.id, t.id)"
+                ></button>
+              </span>
+              <span
+                v-if="!i.bk.addingTag"
+                class="tag add-btn is-primary"
+                @click="toggleAddTag(i.id)"
+              >
+                <span v-if="i.bk.tags.length === 0" class="mr-2">Add tags</span>
+                <font-awesome-icon icon="plus" class="del-btn" />
+              </span>
+              <span v-else class="tag is-light">
+                <input
+                  v-focus
+                  placeholder="new tag"
+                  v-model="newTag"
+                  @blur="saveTagForBookmark(i.id)"
+                  @keyup.enter="$event.target.blur"
+                  type="text"
+                />
+              </span>
             </div>
           </div>
-          <div class="tags mt-2">
-            <span v-for="t in getBookmarkTags(i.bk)" :key="t.id" class="tag">
-              {{ t.tag }}
-              <button
-                class="delete is-small ml-3 mr-0"
-                @click="deleteBookmarkTag(i.id, t.id)"
-              ></button>
-            </span>
-            <span
-              v-if="!i.bk.addingTag"
-              class="tag add-btn is-primary"
-              @click="toggleAddTag(i.id)"
-            >
-              <span v-if="i.bk.tags.length === 0" class="mr-2">Add tags</span>
-              <font-awesome-icon icon="plus" class="del-btn" />
-            </span>
-            <span v-else class="tag is-light">
-              <input
-                v-focus
-                placeholder="new tag"
-                v-model="newTag"
-                @blur="saveTagForBookmark(i.id)"
-                @keyup.enter="$event.target.blur"
-                type="text"
-              />
-            </span>
+          <div class="bookmark-controls">
+            <div
+              class="delete is-light"
+              style="float: right"
+              @click="deleteBookmark(i.id)"
+            />
           </div>
-        </div>
-        <div class="bookmark-controls">
-          <div class="delete is-light" @click="deleteBookmark(i.id)" />
         </div>
       </div>
     </div>
@@ -180,8 +186,18 @@ export default class Booklet extends Vue {
   }
 }
 
+.app-title-bar {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
 .light-btn {
   color: $text-light;
+}
+
+.bookmarks-container {
+  height: calc(100vh - 55px - 69px - 0.75em);
+  overflow-y: scroll;
 }
 
 .bookmark {
@@ -214,9 +230,6 @@ export default class Booklet extends Vue {
   .bookmark-controls {
     grid-column-start: 2;
     grid-column-end: -1;
-
-    display: flex;
-    justify-content: right;
   }
 }
 </style>
